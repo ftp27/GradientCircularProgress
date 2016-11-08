@@ -10,7 +10,7 @@ import UIKit
 
 class GradientArcWithClearColorView : UIView {
     
-    internal func draw(_ rect: CGRect, prop: Property) -> UIImageView {
+    internal func draw(rect: CGRect, prop: Property) -> UIImageView {
         // Gradient Clear Circular
         
         /* Prop */
@@ -27,20 +27,20 @@ class GradientArcWithClearColorView : UIView {
         endArcColorProp.startArcColor = ColorUtil.toNotOpacityColor(color: endArcColorProp.endArcColor)
         
         // StartGradientMask
-        startGradientMaskProp.startArcColor = UIColor.black
-        startGradientMaskProp.endArcColor = UIColor.white
+        startGradientMaskProp.startArcColor = UIColor.blackColor()
+        startGradientMaskProp.endArcColor = UIColor.whiteColor()
         startGradientMaskProp.progressSize += 10.0
         startGradientMaskProp.arcLineWidth += 20.0
         
         // EndGradientMask
-        endGradientMaskProp.startArcColor = UIColor.white
-        endGradientMaskProp.endArcColor = UIColor.black
+        endGradientMaskProp.startArcColor = UIColor.whiteColor()
+        endGradientMaskProp.endArcColor = UIColor.blackColor()
         endGradientMaskProp.progressSize += 10.0
         endGradientMaskProp.arcLineWidth += 20.0
 
         // SolidMask
-        solidMaskProp.startArcColor = UIColor.black
-        solidMaskProp.endArcColor   = UIColor.black
+        solidMaskProp.startArcColor = UIColor.blackColor()
+        solidMaskProp.endArcColor   = UIColor.blackColor()
         
         /* Mask Image */
         // StartArcColorImage
@@ -82,54 +82,54 @@ class GradientArcWithClearColorView : UIView {
         
         /* UIImageView */
         let imageView = UIImageView(image: image)
-        imageView.contentMode = .scaleAspectFill
+        imageView.contentMode = .ScaleAspectFill
         imageView.clipsToBounds = true
         
         return imageView
     }
     
-    internal func mask(_ image: UIImage, maskImage: UIImage) -> UIImage {
+    internal func mask(image: UIImage, maskImage: UIImage) -> UIImage {
         
-        let maskRef: CGImage = maskImage.cgImage!
-        let mask: CGImage = CGImage(
-            maskWidth: maskRef.width,
-            height: maskRef.height,
-            bitsPerComponent: maskRef.bitsPerComponent,
-            bitsPerPixel: maskRef.bitsPerPixel,
-            bytesPerRow: maskRef.bytesPerRow,
-            provider: maskRef.dataProvider!,
-            decode: nil,
-            shouldInterpolate: false)!
+        let maskRef: CGImageRef = maskImage.CGImage!
+        let mask: CGImageRef = CGImageMaskCreate(
+            CGImageGetWidth(maskRef),
+            CGImageGetHeight(maskRef),
+            CGImageGetBitsPerComponent(maskRef),
+            CGImageGetBitsPerPixel(maskRef),
+            CGImageGetBytesPerRow(maskRef),
+            CGImageGetDataProvider(maskRef)!,
+            nil,
+            false)!
         
-        let maskedImageRef: CGImage = image.cgImage!.masking(mask)!
-        let scale = UIScreen.main.scale
-        let maskedImage: UIImage = UIImage(cgImage: maskedImageRef, scale: scale, orientation: .up)
+        let maskedImageRef: CGImageRef = CGImageCreateWithMask(image.CGImage!, mask)!
+        let scale = UIScreen.mainScreen().scale
+        let maskedImage: UIImage = UIImage.init(CGImage: maskedImageRef, scale: scale, orientation: .Up)
         
         return maskedImage
     }
     
-    internal func viewToUIImage(_ view: UIView) -> UIImage? {
+    internal func viewToUIImage(view: UIView) -> UIImage? {
         
-        let scale = UIScreen.main.scale
+        let scale = UIScreen.mainScreen().scale
         UIGraphicsBeginImageContextWithOptions(view.frame.size, false, scale)
-        view.layer.render(in: UIGraphicsGetCurrentContext()!)
+        view.layer.renderInContext(UIGraphicsGetCurrentContext()!)
         let image = UIGraphicsGetImageFromCurrentImageContext()
         UIGraphicsEndImageContext()
         
         return image
     }
     
-    internal func composite(image1: UIImage, image2: UIImage, prop: Property) -> UIImage {
+    internal func composite(image1 image1: UIImage, image2: UIImage, prop: Property) -> UIImage {
         
-        let scale = UIScreen.main.scale
+        let scale = UIScreen.mainScreen().scale
         UIGraphicsBeginImageContextWithOptions(image1.size, false, scale)
-        image1.draw(
-            in: CGRect(x: 0, y: 0, width: image1.size.width, height: image1.size.height),
-            blendMode: .overlay,
+        image1.drawInRect(
+            CGRectMake(0, 0, image1.size.width, image1.size.height),
+            blendMode: .Overlay,
             alpha: ColorUtil.toRGBA(color: prop.startArcColor).a)
-        image2.draw(
-            in: CGRect(x: 0, y: 0, width: image2.size.width, height: image2.size.height),
-            blendMode: .overlay,
+        image2.drawInRect(
+            CGRectMake(0, 0, image2.size.width, image2.size.height),
+            blendMode: .Overlay,
             alpha: ColorUtil.toRGBA(color: prop.endArcColor).a)
         let image = UIGraphicsGetImageFromCurrentImageContext()
         UIGraphicsEndImageContext()

@@ -33,12 +33,12 @@ class ProgressView : UIView {
         super.init(coder: aDecoder)!
     }
     
-    private func initialize(_ frame: CGRect) {
-        viewRect = CGRect(x: 0, y: 0, width: frame.size.width, height: frame.size.height)
+    private func initialize(frame: CGRect) {
+        viewRect = CGRectMake(0, 0, frame.size.width, frame.size.height)
         self.clipsToBounds = true
     }
     
-    internal func arc(_ display: Bool, style: StyleProperty) {
+    internal func arc(display: Bool, style: StyleProperty) {
         
         prop = Property(style: style)
         
@@ -46,11 +46,11 @@ class ProgressView : UIView {
             return
         }
         
-        self.isUserInteractionEnabled = !(prop.backgroundStyle.hashValue == 0) ? true : false
+        self.userInteractionEnabled = !(prop.backgroundStyle.hashValue == 0) ? true : false
         
         getBlurView()
         
-        progressAtRatioView = ProgressAtRatioView(frame: CGRect(x: 0, y: 0, width: prop.progressSize, height: prop.progressSize))
+        progressAtRatioView = ProgressAtRatioView(frame: CGRectMake(0, 0, prop.progressSize, prop.progressSize))
         
         guard let progressAtRatioView = progressAtRatioView else {
             return
@@ -63,16 +63,16 @@ class ProgressView : UIView {
             progressAtRatioView.showRatio()
         }
         
-        progressAtRatioView.frame = CGRect(
-            x: (self.frame.size.width - progressAtRatioView.frame.size.width) / 2,
-            y: (self.frame.size.height - progressAtRatioView.frame.size.height) / 2,
-            width: progressAtRatioView.frame.size.width,
-            height: progressAtRatioView.frame.size.height)
+        progressAtRatioView.frame = CGRectMake(
+            (self.frame.size.width - progressAtRatioView.frame.size.width) / 2,
+            (self.frame.size.height - progressAtRatioView.frame.size.height) / 2,
+            progressAtRatioView.frame.size.width,
+            progressAtRatioView.frame.size.height)
         
         self.addSubview(progressAtRatioView)
     }
     
-    internal func circle(_ message: String?, style: StyleProperty) {
+    internal func circle(message: String?, style: StyleProperty) {
         
         prop = Property(style: style)
         
@@ -80,11 +80,11 @@ class ProgressView : UIView {
             return
         }
         
-        self.isUserInteractionEnabled = !(prop.backgroundStyle.hashValue == 0) ? true : false
+        self.userInteractionEnabled = !(prop.backgroundStyle.hashValue == 0) ? true : false
                 
         getBlurView()
         
-        circularProgressView = CircularProgressView(frame: CGRect(x: 0, y: 0, width: prop.progressSize, height: prop.progressSize))
+        circularProgressView = CircularProgressView(frame: CGRectMake(0, 0, prop.progressSize, prop.progressSize))
         
         guard let circularProgressView = circularProgressView else {
             return
@@ -97,16 +97,16 @@ class ProgressView : UIView {
             circularProgressView.showMessage(message)
         }
         
-        circularProgressView.frame = CGRect(
-            x: (self.frame.size.width - circularProgressView.frame.size.width) / 2,
-            y: (self.frame.size.height - circularProgressView.frame.size.height) / 2,
-            width: circularProgressView.frame.size.width,
-            height: circularProgressView.frame.size.height)
+        circularProgressView.frame = CGRectMake(
+            (self.frame.size.width - circularProgressView.frame.size.width) / 2,
+            (self.frame.size.height - circularProgressView.frame.size.height) / 2,
+            circularProgressView.frame.size.width,
+            circularProgressView.frame.size.height)
         
         self.addSubview(circularProgressView)
     }
     
-    internal func updateMessage(_ message: String) {
+    internal func updateMessage(message: String) {
         
         guard let circularProgressView = circularProgressView else {
             return
@@ -127,7 +127,7 @@ class ProgressView : UIView {
             return
         }
         
-        self.backgroundColor = UIColor.clear
+        self.backgroundColor = UIColor.clearColor()
         self.addSubview(blurView)
     }
 }

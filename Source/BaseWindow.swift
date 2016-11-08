@@ -13,23 +13,23 @@ class BaseWindow : UIWindow {
     override init(frame: CGRect) {
         super.init(frame: frame)
         
-        let orientation:UIInterfaceOrientation = UIApplication.shared.statusBarOrientation
+        let orientation:UIInterfaceOrientation = UIApplication.sharedApplication().statusBarOrientation
         
         switch orientation {
-            case .landscapeLeft:
+            case .LandscapeLeft:
                 fallthrough
-            case .landscapeRight:
+            case .LandscapeRight:
                 // LandscapeLeft | LandscapeRight
-                self.frame = CGRect(x: 0, y: 0, width: UIScreen.main.bounds.height, height: UIScreen.main.bounds.width)
+                self.frame = CGRectMake(0, 0, UIScreen.mainScreen().bounds.height, UIScreen.mainScreen().bounds.width)
             default:
                 // Unknown | Portrait | PortraitUpsideDown
-                self.frame = CGRect(x: 0, y: 0, width: UIScreen.main.bounds.width, height: UIScreen.main.bounds.height)
+                self.frame = CGRectMake(0, 0, UIScreen.mainScreen().bounds.width, UIScreen.mainScreen().bounds.height)
         }
         
-        self.backgroundColor = UIColor.clear
+        self.backgroundColor = UIColor.clearColor()
         self.windowLevel = UIWindowLevelAlert + 1
         
-        self.makeKey()
+        self.makeKeyWindow()
         
         self.makeKeyAndVisible()
     }

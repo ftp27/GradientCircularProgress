@@ -10,7 +10,7 @@ import UIKit
 
 class ProgressAtRatioView : UIView {
     
-    internal var arcView: ArcView?
+    private var mask: ArcView?
     internal var prop: Property?
     internal var ratioLabel: UILabel = UILabel()
     
@@ -23,7 +23,7 @@ class ProgressAtRatioView : UIView {
     override init(frame: CGRect) {
         super.init(frame: frame)
         
-        self.backgroundColor = UIColor.clear
+        self.backgroundColor = UIColor.clearColor()
         self.layer.masksToBounds = true
     }
 
@@ -31,13 +31,13 @@ class ProgressAtRatioView : UIView {
         fatalError("init(coder:) has not been implemented")
     }
     
-    internal func initialize(_ frame: CGRect) {
+    internal func initialize(frame: CGRect) {
         
         guard let prop = prop else {
             return
         }
         
-        let rect: CGRect = CGRect(x: 0, y: 0, width: frame.size.width, height: frame.size.height)
+        let rect: CGRect = CGRectMake(0, 0, frame.size.width, frame.size.height)
         
         // Base Circular
         if let baseLineWidth = prop.baseLineWidth, let baseArcColor = prop.baseArcColor {
@@ -67,21 +67,23 @@ class ProgressAtRatioView : UIView {
         }
     }
     
-    private func masking(rect: CGRect, prop: Property, gradient: UIView) {
+    private func masking(rect rect: CGRect, prop: Property, gradient: UIView) {
         // Mask
-        arcView = ArcView(frame: rect, lineWidth: prop.arcLineWidth)
+        mask = ArcView(frame: rect, lineWidth: prop.arcLineWidth)
         
-        guard let mask = arcView else {
+        guard let mask = mask else {
             return
         }
         
         mask.prop = prop
-        gradient.layer.mask = mask.layer
+        let maskView = mask
+        maskView.frame = mask.frame
+        gradient.layer.mask = maskView.layer
     }
     
-    override func draw(_ rect: CGRect) {
+    override func drawRect(rect: CGRect) {
         
-        guard let mask = arcView else {
+        guard let mask = mask else {
             return
         }
         
@@ -102,7 +104,7 @@ class ProgressAtRatioView : UIView {
         // Progress Ratio
         ratioLabel.text = "          "
         ratioLabel.font = prop.ratioLabelFont
-        ratioLabel.textAlignment = NSTextAlignment.right
+        ratioLabel.textAlignment = NSTextAlignment.Right
         ratioLabel.textColor = prop.ratioLabelFontColor
         ratioLabel.sizeToFit()
         ratioLabel.center = self.center

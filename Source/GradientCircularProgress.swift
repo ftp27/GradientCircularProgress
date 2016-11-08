@@ -12,10 +12,9 @@ internal var baseWindow: BaseWindow?
 
 public class GradientCircularProgress {
     
-    fileprivate var progressViewController: ProgressViewController?
-    fileprivate var progressView: ProgressView?
-    
-    public var isAvailable: Bool = false
+    private var progressViewController: ProgressViewController?
+    private var progressView: ProgressView?
+    private var available: Bool = false
     
     public init() {}
 }
@@ -23,8 +22,8 @@ public class GradientCircularProgress {
 // MARK: Common
 extension GradientCircularProgress {
     
-    public func updateMessage(message: String) {
-        if !isAvailable {
+    public func updateMessage(message message: String) {
+        if !available {
             return
         }
         
@@ -39,8 +38,8 @@ extension GradientCircularProgress {
         }
     }
     
-    public func updateRatio(_ ratio: CGFloat) {
-        if !isAvailable {
+    public func updateRatio(ratio: CGFloat) {
+        if !available {
             return
         }
         
@@ -59,61 +58,61 @@ extension GradientCircularProgress {
 // MARK: Use UIWindow
 extension GradientCircularProgress {
     
-    public func showAtRatio(display: Bool = true, style: StyleProperty = Style()) {
-        if isAvailable {
+    public func showAtRatio(display display: Bool = true, style: StyleProperty = Style()) {
+        if available {
             return
         }
-        isAvailable = true
+        available = true
         
         getProgressAtRatio(display, style: style)
     }
     
-    private func getProgressAtRatio(_ display: Bool, style: StyleProperty) {
+    private func getProgressAtRatio(display: Bool, style: StyleProperty) {
         baseWindow = BaseWindow()
         progressViewController = ProgressViewController()
         
-        guard let win = baseWindow, let vc = progressViewController else {
+        guard let win = baseWindow, vc = progressViewController else {
             return
         }
         
         win.rootViewController = vc
-        win.backgroundColor = UIColor.clear
+        win.backgroundColor = UIColor.clearColor()
         vc.arc(display, style: style)
     }
     
-    public func show(style: StyleProperty = Style()) {
-        if isAvailable {
+    public func show(style style: StyleProperty = Style()) {
+        if available {
             return
         }
-        isAvailable = true
+        available = true
         
         getProgress(message: nil, style: style)
     }
     
-    public func show(message: String, style: StyleProperty = Style()) {
-        if isAvailable {
+    public func show(message message: String, style: StyleProperty = Style()) {
+        if available {
             return
         }
-        isAvailable = true
+        available = true
         
         getProgress(message: message, style: style)
     }
     
-    private func getProgress(message: String?, style: StyleProperty) {
+    private func getProgress(message message: String?, style: StyleProperty) {
         baseWindow = BaseWindow()
         progressViewController = ProgressViewController()
         
-        guard let win = baseWindow, let vc = progressViewController else {
+        guard let win = baseWindow, vc = progressViewController else {
             return
         }
         
         win.rootViewController = vc
-        win.backgroundColor = UIColor.clear
+        win.backgroundColor = UIColor.clearColor()
         vc.circle(message, style: style)
     }
     
     public func dismiss() {
-        if !isAvailable {
+        if !available {
             return
         }
         
@@ -124,8 +123,8 @@ extension GradientCircularProgress {
         cleanup(1.4, completionHandler: nil)
     }
     
-    public func dismiss(_ completionHandler: @escaping () -> Void) -> () {
-        if !isAvailable {
+    public func dismiss(completionHandler: () -> Void) -> () {
+        if !available {
             return
         }
         
@@ -138,44 +137,44 @@ extension GradientCircularProgress {
         }
     }
     
-    private func cleanup(_ t: Double, completionHandler: (() -> Void)?) {
+    private func cleanup(t: Double, completionHandler: (() -> Void)?) {
         let delay = t * Double(NSEC_PER_SEC)
-        let time  = DispatchTime.now() + Double(Int64(delay)) / Double(NSEC_PER_SEC)
+        let time  = dispatch_time(DISPATCH_TIME_NOW, Int64(delay))
         
-        DispatchQueue.main.asyncAfter(deadline: time) {
+        dispatch_after(time, dispatch_get_main_queue(), {
             guard let win = baseWindow else {
                 return
             }
             
-            UIView.animate(
-                withDuration: 0.3,
+            UIView.animateWithDuration(
+                0.3,
                 animations: {
                     win.alpha = 0
                 },
-                completion: { [weak self] finished in
-                    self?.progressViewController = nil
-                    win.isHidden = true
+                completion: { finished in
+                    self.progressViewController = nil
+                    win.hidden = true
                     win.rootViewController = nil
                     baseWindow = nil
-                    self?.isAvailable = false
+                    self.available = false
                     guard let completionHandler = completionHandler else {
                         return
                     }
                     completionHandler()
                 }
-            )
-        }
+            );
+        })
     }
 }
 
 // MARK: Use addSubView
 extension GradientCircularProgress {
     
-    public func showAtRatio(frame: CGRect, display: Bool = true, style: StyleProperty = Style()) -> UIView? {
-        if isAvailable {
+    public func showAtRatio(frame frame: CGRect, display: Bool = true, style: StyleProperty = Style()) -> UIView? {
+        if available {
             return nil
         }
-        isAvailable = true
+        available = true
         
         progressView = ProgressView(frame: frame)
         
@@ -188,25 +187,25 @@ extension GradientCircularProgress {
         return v
     }
     
-    public func show(frame: CGRect, style: StyleProperty = Style()) -> UIView? {
-        if isAvailable {
+    public func show(frame frame: CGRect, style: StyleProperty = Style()) -> UIView? {
+        if available {
             return nil
         }
-        isAvailable = true
+        available = true
         
         return getProgress(frame: frame, message: nil, style: style)
     }
     
-    public func show(frame: CGRect, message: String, style: StyleProperty = Style()) -> UIView? {
-        if isAvailable {
+    public func show(frame frame: CGRect, message: String, style: StyleProperty = Style()) -> UIView? {
+        if available {
             return nil
         }
-        isAvailable = true
+        available = true
         
         return getProgress(frame: frame, message: message, style: style)
     }
     
-    private func getProgress(frame: CGRect, message: String?, style: StyleProperty) -> UIView? {
+    private func getProgress(frame frame: CGRect, message: String?, style: StyleProperty) -> UIView? {
         
         progressView = ProgressView(frame: frame)
         
@@ -220,15 +219,15 @@ extension GradientCircularProgress {
     }
     
     public func dismiss(progress view: UIView) {
-        if !isAvailable {
+        if !available {
             return
         }
         
         cleanup(0.8, view: view, completionHandler: nil)
     }
     
-    public func dismiss(progress view: UIView, completionHandler: @escaping () -> Void) -> () {
-        if !isAvailable {
+    public func dismiss(progress view: UIView, completionHandler: () -> Void) -> () {
+        if !available {
             return
         }
         
@@ -237,25 +236,26 @@ extension GradientCircularProgress {
         }
     }
     
-    private func cleanup(_ t: Double, view: UIView, completionHandler: (() -> Void)?) {
+    private func cleanup(t: Double, view: UIView, completionHandler: (() -> Void)?) {
         let delay = t * Double(NSEC_PER_SEC)
-        let time  = DispatchTime.now() + Double(Int64(delay)) / Double(NSEC_PER_SEC)
+        let time  = dispatch_time(DISPATCH_TIME_NOW, Int64(delay))
         
-        DispatchQueue.main.asyncAfter(deadline: time) {
-            UIView.animate(
-                withDuration: 0.3,
+        dispatch_after(time, dispatch_get_main_queue(), {
+            
+            UIView.animateWithDuration(
+                0.3,
                 animations: {
                     view.alpha = 0
                 },
-                completion: { [weak self] finished in
+                completion: { finished in
                     view.removeFromSuperview()
-                    self?.isAvailable = false
+                    self.available = false
                     guard let completionHandler = completionHandler else {
                         return
                     }
                     completionHandler()
                 }
-            )
-        }
+            );
+        })
     }
 }
